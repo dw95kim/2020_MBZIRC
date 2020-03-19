@@ -1,0 +1,16 @@
+item {
+  id: 1
+  name: 'fire'
+}
+item {
+  id: 2
+  name: 'fire_ir'
+}
+item {
+  id: 3
+  name: 'fire_vis'
+}
+item {
+  id: 4
+  name: 'hole'
+}

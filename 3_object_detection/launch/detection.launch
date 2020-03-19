@@ -1,0 +1,6 @@
+<!-- -->
+<launch>
+    <arg name="robot_namespace" default="scout"/>
+    <node pkg= "tensorflow_object_detector" name="detect_ros" type="detect_ros.py"  output="screen" ns="$(arg robot_namespace)"> 
+    </node>
+</launch>
