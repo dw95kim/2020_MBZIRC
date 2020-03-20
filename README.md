@@ -1,5 +1,17 @@
 # 2020_MBZIRC
 
+## Env
+```
+python 2.7
+ROS Kinetic
+Nvidia driver 410.15
+CUDA 10.0
+Cudnn 7.5
+tensorflow 1.14.0
+PX4 firmware
+QgroundContorl
+```
+
 ## gazebo 검증
 ```
 1. Q ground control 켜기
