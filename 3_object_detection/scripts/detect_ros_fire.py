@@ -38,7 +38,7 @@ import time
 from object_detection.utils import label_map_util
 from object_detection.utils import visualization_utils as vis_util
 
-GAZEBO_SIMULATION = False
+GAZEBO_SIMULATION = True
 
 # SET FRACTION OF GPU YOU WANT TO USE HERE
 GPU_FRACTION = 0.7
@@ -62,8 +62,10 @@ class detector:
         self.object_pub = rospy.Publisher("objects", Detection2DArray, queue_size=1)
         self.detect_pub = rospy.Publisher("/uav1/detection_fire", Float32MultiArray, queue_size=1)
         self.bridge = CvBridge()
-        #self.image_sub = rospy.Subscriber("/scout/forward/image_raw", Image, self.image_cb, queue_size=1, buff_size=2**24)
-        self.image_sub = rospy.Subscriber("/camera/color/image_raw", Image, self.image_cb, queue_size=1, buff_size=2**24)
+
+        self.image_sub = rospy.Subscriber("/iris/usb_cam/image_raw", Image, self.image_cb, queue_size=1, buff_size=2**24)
+        # self.image_sub = rospy.Subscriber("/scout/forward/image_raw", Image, self.image_cb, queue_size=1, buff_size=2**24)
+        # self.image_sub = rospy.Subscriber("/camera/color/image_raw", Image, self.image_cb, queue_size=1, buff_size=2**24)
         self.depth_image_sub = rospy.Subscriber("/camera/aligned_depth_to_color/image_raw", Image, self.image_depth, queue_size=1, buff_size=2**24)
         self.local_pos_sub = rospy.Subscriber("/uav1/mavros/global_position/local", Odometry, self.uav1_odom_callback, queue_size=2)
         #self.image_sub = rospy.Subscriber("/qsf/image_raw", Image, self.image_cb, queue_size=1, buff_size=2**24)
@@ -74,8 +76,8 @@ class detector:
         self.size_img = [0, 0]
         self.flag = 0
         self.tar_image = [self.flag, self.size_img[0], self.size_img[1], self.pos_img[0], self.pos_img[1]]
-        self.PATH_TO_CKPT = '/home/usrg/catkin_ws/src/3_object_detection/data/models/frozen_inference_graph_200224_D435_1.pb'
-        self.PATH_TO_LABELS = '/home/usrg/catkin_ws/src/3_object_detection/data/labels/labelmap_4.pbtxt'
+        self.PATH_TO_CKPT = '/home/usrg-asus/MBZ_ws/src/3_object_detection/data/models/frozen_inference_graph_ptgrey_overfitting.pb'
+        self.PATH_TO_LABELS = '/home/usrg-asus/MBZ_ws/src/3_object_detection/data/labels/labelmap_4.pbtxt'
         self.NUM_CLASSES = 1
         self.is_initialized = 0
         self.depth_img = []
@@ -146,6 +148,8 @@ class detector:
                 self.target_depth = distance/1000.0
 
     def image_cb(self, data):
+        print("here")
+
         global image_height, image_width, image_center_x, image_center_y
         objArray = Detection2DArray()
         try:

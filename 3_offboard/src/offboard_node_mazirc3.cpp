@@ -206,7 +206,7 @@ int flag_target_aim_mode = 0;
 int count_target_aim_mode = 0;
 int count_target_deaim_mode = 0;
 
-float height_m = 0.0;
+// float height_m = 0.0;
 float height_pre = 0.0;
 
 //////////////////////////////////////
@@ -322,6 +322,7 @@ void callback_state(const mavros_msgs::State::ConstPtr& msg)
     std::cout << "\n          velocity auto              = " << cmd_x << ", "<< cmd_y << ", "<< cmd_z  << ", "<< cmd_r;
     std::cout << "\n          velocity output            = " << velcmd.twist.linear.x << ", "<<velcmd.twist.linear.y << ", "<<velcmd.twist.linear.z <<  ", "<<velcmd.twist.angular.z;
     std::cout << "\n          water_detected             = " << Water_Detected;
+    std::cout << "\n          Servo_Agnle                = " << Servo_Angle;
     std::cout << "\n          flag_target_aim            = " << flag_target_aim_mode;
     std::cout << "\n          detected_pipe_position     = " << detected_pipe_position_X << ", "<<detected_pipe_position_Y << ", "<<detected_pipe_position_Z;
     std::cout << "\n          count_aim/deaim_mode       = " << count_target_aim_mode << ", "<< count_target_deaim_mode;
@@ -446,7 +447,7 @@ int main(int argc, char **argv)
     ros::Subscriber cmd_sub       = nh_sub.subscribe ("/uav1/mavros_comm_node/tele_key/cmd_vel", 2,     &callback_cmd_vel);
     ros::Subscriber flag_sub      = nh_sub.subscribe ("/uav1/mavros_comm_node/tele_key/flag", 2,        &callback_cmd_flag);
     ros::Subscriber cmd_rc_in     = nh_sub.subscribe ("/uav1/mavros/rc/in", 2,                          &callback_rc_in);
-    ros::Subscriber tera_sub      = nh_.subscribe<sensor_msgs::LaserScan> ("/uav1/teraranger", 1,       &callback_terarange);
+    ros::Subscriber tera_sub      = nh_sub.subscribe<sensor_msgs::LaserScan> ("/uav1/teraranger", 1,       &callback_terarange);
 
     ros::Subscriber astar_sub     = nh_sub.subscribe ("/uav1/astar_path_info", 2,                       &callback_astar_path);
     ros::Subscriber goal_sub      = nh_sub.subscribe ("/uav1/GoalAction", 2,                            &callback_goal);
@@ -890,8 +891,8 @@ void Facade(void)
 
             detected_pipe_position_X = Cur_Pos_m[0] + (tar_data.impos[0] * sin(Cur_Att_rad[2]) + tar_data.dist * cos(Cur_Att_rad[2]));
             detected_pipe_position_Y = Cur_Pos_m[1] + (-1 * tar_data.impos[0] * cos(Cur_Att_rad[2]) + tar_data.dist * sin(Cur_Att_rad[2]));
-            // detected_pipe_position_Z = Cur_Pos_m[2] - tar_data.impos[1];
-            detected_pipe_position_Z = height_m - tar_data.impos[1];
+            detected_pipe_position_Z = Cur_Pos_m[2] - tar_data.impos[1];
+            // detected_pipe_position_Z = height_m - tar_data.impos[1];
 
             dist_cur_and_detected_pipe = sqrt((detected_pipe_position_X - fire_extinguish_pipe_position_X[ind]) * (detected_pipe_position_X - fire_extinguish_pipe_position_X[ind])
                                                     + (detected_pipe_position_Y - fire_extinguish_pipe_position_Y[ind]) * (detected_pipe_position_Y - fire_extinguish_pipe_position_Y[ind])
@@ -902,8 +903,8 @@ void Facade(void)
                 count_target_aim_mode = 0;
                 cmd_x = satmax(Kpx*(goal[0] - Cur_Pos_m[0]),goal_velx);
                 cmd_y = satmax(Kpx*(goal[1] - Cur_Pos_m[1]),goal_velx);
-                // cmd_z = satmax(Kpz*(goal[2] - Cur_Pos_m[2]),goal_velz) + Kdz*(0.0 - Cur_Vel_mps[2]);
-                cmd_z = satmax(Kpz*(goal[2] - height_m),goal_velz) + Kdz*(0.0 - Cur_Vel_mps[2]);
+                cmd_z = satmax(Kpz*(goal[2] - Cur_Pos_m[2]),goal_velz) + Kdz*(0.0 - Cur_Vel_mps[2]);
+                // cmd_z = satmax(Kpz*(goal[2] - height_m),goal_velz) + Kdz*(0.0 - Cur_Vel_mps[2]);
 
                 angle_err = GetNED_angle_err(goal[3], Cur_Att_rad[2]);
                 cmd_r = -satmax(Kr*angle_err, R_MAX);
@@ -928,12 +929,12 @@ void Facade(void)
                 count_target_aim_mode ++;
             }
         }
-        else{
+        else{   
             count_target_aim_mode = 0;
             cmd_x = satmax(Kpx*(goal[0] - Cur_Pos_m[0]),goal_velx);
             cmd_y = satmax(Kpx*(goal[1] - Cur_Pos_m[1]),goal_velx);
-            // cmd_z = satmax(Kpz*(goal[2] - Cur_Pos_m[2]),goal_velz) + Kdz*(0.0 - Cur_Vel_mps[2]);
-            cmd_z = satmax(Kpz*(goal[2] - height_m),goal_velz) + Kdz*(0.0 - Cur_Vel_mps[2]);
+            cmd_z = satmax(Kpz*(goal[2] - Cur_Pos_m[2]),goal_velz) + Kdz*(0.0 - Cur_Vel_mps[2]);
+            // cmd_z = satmax(Kpz*(goal[2] - height_m),goal_velz) + Kdz*(0.0 - Cur_Vel_mps[2]);
 
             angle_err = GetNED_angle_err(goal[3], Cur_Att_rad[2]);
             cmd_r = -satmax(Kr*angle_err, R_MAX);
@@ -965,8 +966,8 @@ void Facade(void)
 
                 fire_extinguish_pipe_position_X[extinguished_fire_count] = Cur_Pos_m[0] + (tar_data.impos[0] * sin(Cur_Att_rad[2]) + tar_data.dist * cos(Cur_Att_rad[2]));
                 fire_extinguish_pipe_position_Y[extinguished_fire_count] = Cur_Pos_m[1] + (-1 * tar_data.impos[0] * cos(Cur_Att_rad[2]) + tar_data.dist * sin(Cur_Att_rad[2]));
-                // fire_extinguish_pipe_position_Z[extinguished_fire_count] = Cur_Pos_m[2] - tar_data.impos[1];
-                fire_extinguish_pipe_position_Z[extinguished_fire_count] = height_m - tar_data.impos[1];
+                fire_extinguish_pipe_position_Z[extinguished_fire_count] = Cur_Pos_m[2] - tar_data.impos[1];
+                // fire_extinguish_pipe_position_Z[extinguished_fire_count] = height_m - tar_data.impos[1];
 
                 extinguished_fire_count += 1;
             }

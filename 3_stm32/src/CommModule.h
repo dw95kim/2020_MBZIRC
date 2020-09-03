@@ -119,7 +119,7 @@ void* receive_p_thread(void *fdt)
                 {
                     Servo_angle = RXRawData[2];
                     // printf("[Servo_angle] \t %c\n", Servo_angle);
-		    StrROS_RX_Angle_Data.angle = Servo_angle;
+		            StrROS_RX_Angle_Data.angle = Servo_angle;
                     ParsingMode = 4;
                 }
                 else

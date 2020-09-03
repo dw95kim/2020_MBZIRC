@@ -27,7 +27,7 @@ elif hostname == 'usrg-ZenBook' or hostname == 'usrgasus-ZenBook-Pro-Duo-UX581GV
 else:
     GAZEBO_SIMULATION = False
 
-GAZEBO_SIMULATION = False #?
+GAZEBO_SIMULATION = True #?
 using_GPS_test = False
 
 eps = 0.0000001
@@ -132,7 +132,7 @@ class ros_class:
         ## Added by TY
         self.flag_extinguish_end = 0
         self.count_facade_fire = 0
-        self.total_facade_fire = 1                              ## It should be updated in challenge course.
+        self.total_facade_fire = 15                              ## It should be updated in challenge course.
 
         self.prev_facade_x = 0.0
         self.prev_facade_y = 0.0
@@ -145,7 +145,7 @@ class ros_class:
         if GAZEBO_SIMULATION == True:
             #                                                                          5                                        10      
             self.WayPoint_X =           [    2.5,   2.5,    2.5,    2.5,    2.5,     0.0,     0.0,  -10.0,   -10.0,  -12.5,  -12.5,  -12.5,  -12.5,  -12.5,  -12.5,  -12.5,   -10.0]
-            self.WayPoint_Y =           [  -22.0, -20.0,  -28.0,  -28.0,  -32.5,   -32.5,   -32.5,  -32.5,   -32.5,  -32.5,  -32.5,  -28.0,  -28.0,  -22.0,  -22.0,  -17.5,   -17.5]
+            self.WayPoint_Y =           [  -24.0, -20.0,  -29.0,  -29.0,  -32.5,   -32.5,   -32.5,  -32.5,   -32.5,  -32.5,  -32.5,  -28.0,  -28.0,  -22.0,  -22.0,  -17.5,   -17.5]
             self.WayPoint_Z =           [    2.0,  11.0,   11.0,    2.0,    2.0,     2.0,    11.0,   11.0,     2.0,    2.0,    8.0,    8.0,   11.0,   11.0,    6.0,    6.0,     8.0]
             self.WayPoint_heading =     [  180.0, 180.0,  180.0,  180.0,  180.0,    90.0,    90.0,   90.0,    90.0,   90.0,   90.0,    0.0,    0.0,    0.0,    0.0,    0.0,   270.0]
             #                              <<<<<<<<Left_pipe>>>>>>>>>>>             <<<<<<<<     back_pipe    >>>>>>>>>>>>           <<<<<<<   right_pipe >>>>>>>>>           window                                                                                                   
